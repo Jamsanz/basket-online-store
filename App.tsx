@@ -1,12 +1,37 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { Provider } from 'react-redux';
+import store from './store';
+import MainContainer from './screens/auth';
+import { useFonts, Pacifico_400Regular } from '@expo-google-fonts/pacifico';
+import { useCallback, useEffect } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AsyncDeleteItem } from './utils';
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    pacifico: Pacifico_400Regular
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  useEffect(() => {
+    // AsyncDeleteItem("token");
+    SplashScreen.preventAutoHideAsync()
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider onLayout={onLayoutRootView}>
+      <Provider store={store}>
+        <MainContainer />
+        <StatusBar style="light" />
+      </Provider>
+    </SafeAreaProvider>
   );
 }
 
